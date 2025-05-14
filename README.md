@@ -11,9 +11,7 @@
   </style>
 </head>
 <body>
-
   <h2>AI CV Generator (KES 100)</h2>
-
   <input type="text" id="name" placeholder="Full Name" />
   <input type="text" id="email" placeholder="Email" />
   <input type="text" id="phone" placeholder="Phone Number" />
@@ -22,14 +20,35 @@
   <textarea id="experience" placeholder="Experience"></textarea>
   <textarea id="skills" placeholder="Skills"></textarea>
   <input type="text" id="jobType" placeholder="Target Job Type" />
-
-  <button onclick="initiatePayment()">Pay with M-Pesa & Generate CV</button>
-
+  <button onclick="payAndGenerateCV()">Pay with M-Pesa & Generate CV</button>
   <div id="output" style="margin-top: 20px;"></div>
-
   <script>
-    async function initiatePayment() {
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value || 'cv@ventures.com';
+    async function payAndGenerateCV() {
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        objective: document.getElementById('objective').value,
+        education: document.getElementById('education').value,
+        experience: document.getElementById('experience').value,
+        skills: document.getElementById('skills').value,
+        jobType: document.getElementById('jobType').value
+      };
 
-      // Step 1: Call Paybox ST
+      const res = await fetch('/api/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        document.getElementById('output').innerHTML = `<pre>${result.cv}</pre>`;
+      } else {
+        alert("Payment failed: " + result.message);
+      }
+    }
+  </script>
+</body>
+</html>
